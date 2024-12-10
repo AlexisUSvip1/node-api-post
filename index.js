@@ -9,10 +9,11 @@ import authRouter from "./src/routes/auth.router.js";
 import postRouter from "./src/routes/post.router.js";
 import userRouter from "./src/routes/users.router.js";
 import tagsRouter from "./src/routes/tags.router.js";
+import userInteractionHistoryRoutes from "./src/routes/user_interaction.router.js";
+import userRoutes from "./src/routes/users.router.js";
 import { configureGoogleOAuth } from "./src/config/googleOAuth.js";
-
-const app = express();
 dotenv.config();
+const app = express();
 
 // Conectar a MongoDB
 connectDB();
@@ -34,11 +35,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Usar el postRouter para manejar las rutas relacionadas con las publicaciones
-app.use("/posts", postRouter);
-app.use("/users", userRouter);
-app.use("/tags", tagsRouter);
-
-// Usar las rutas de autenticación
+app.use("/api", postRouter);
+app.use("/api", userRouter);
+app.use("/api", tagsRouter);
+app.use("/api", userInteractionHistoryRoutes);
+app.use("/api", userRoutes);
 app.use("/auth", authRouter);
 
 // Manejo de rutas no encontradas

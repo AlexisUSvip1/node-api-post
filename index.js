@@ -41,7 +41,7 @@ app.use("/api", tagsRouter);
 app.use("/api", userInteractionHistoryRoutes);
 app.use("/api", userRoutes);
 app.use("/auth", authRouter);
-
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Manejo de rutas no encontradas
 app.use((req, res, next) => {
   res.status(404).send("Error 404: Página no encontrada");

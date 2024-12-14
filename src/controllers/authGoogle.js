@@ -1,5 +1,4 @@
 import passport from "passport";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20"; // Cambio aquí
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -54,22 +53,8 @@ export const signout = (req, res) => {
   });
 };
 
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID, // Debes definir este valor en tu archivo .env
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET, // Debes definir este valor en tu archivo .env
-      callbackURL: "http://localhost:3000/auth/google/callback", // Esta es la URL de callback
-    },
-    function (accessToken, refreshToken, profile, done) {
-      return done(null, profile);
-    }
-  )
-);
-
 // Serialización y deserialización del usuario
 passport.serializeUser(function (user, done) {
-  console.log(user);
   done(null, user);
 });
 

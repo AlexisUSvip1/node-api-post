@@ -34,6 +34,19 @@ const postSchema = new Schema({
     type: Number,
     default: 0, // Número de vistas, por defecto es 0
   },
+  media: {
+    type: [
+      {
+        url: { type: String, required: true }, // URL del medio (foto, video, etc.)
+        type: {
+          type: String,
+          enum: ["image", "video"],
+          required: true,
+        }, // Tipo de medio
+      },
+    ],
+    default: [], // Por defecto, no hay medios
+  },
   background: {
     type: String, // Puede representar el estado de fondo, como "draft" o "published"
     default: "draft",

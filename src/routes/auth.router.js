@@ -2,13 +2,7 @@ import express from "express";
 const router = express.Router();
 
 // Importa las funciones desde authGoogle.js
-import {
-  authenticate,
-  callback,
-  success,
-  error,
-  signout,
-} from "../controllers/authGoogle.js";
+import { authenticate, callback } from "../controllers/authGoogle.js";
 // Importa las funciones desde authFacebook.js
 import facebookAuth from "../controllers/authFacebook.js";
 // Importa el controlador de registro
@@ -24,11 +18,10 @@ router.get("/facebook/success", facebookAuth.success);
 router.get("/facebook/error", facebookAuth.error);
 router.get("/facebook/signout", facebookAuth.signout);
 
-// Ruta para obtener los datos del usuario autenticado
+
 router.get("/me", (req, res) => {
   if (req.isAuthenticated()) {
-    console.log(req.user);
-    res.json(req.user); // Devuelve los datos del usuario autenticado
+    res.json(req.user);
   } else {
     res.status(401).json({ error: "Usuario no autenticado" });
   }
@@ -39,8 +32,8 @@ router.get("/", (req, res) => {
 });
 
 router.get("/profile", (req, res) => {
-  console.log(req.user);
-  res.send(`Welcome ${req.user.displayName}`);
+  console.log(req.user.display_name);
+  res.send(`Welcome ${req.user.display_name}`);
 });
 
 router.get("/logout", (req, res) => {
@@ -49,4 +42,4 @@ router.get("/logout", (req, res) => {
   });
 });
 
-export default router; // Usando la exportación de ES Modules
+export default router; 

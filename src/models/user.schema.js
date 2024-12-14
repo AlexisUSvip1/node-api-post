@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
+    googleId: { type: String, unique: true, sparse: true }, // `sparse` permite múltiples valores null
     display_name: {
       type: String,
       required: true,
@@ -34,4 +35,4 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-export const User = mongoose.model("User", userSchema);
+export const User = mongoose.model("users", userSchema);

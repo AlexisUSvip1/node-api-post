@@ -1,6 +1,18 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
+const mediaSchema = new Schema({
+  url: {
+    type: String, // Ruta o URL del archivo (e.g., "/uploads/image1.jpg")
+    required: true, // Obligatorio porque cada medio debe tener una referencia
+  },
+  type: {
+    type: String,
+    enum: ["image", "video", "audio"], // Tipos de medios permitidos
+    required: true, // Obligatorio
+  },
+});
+
 // Definir el esquema de Post
 const postSchema = new Schema({
   title: {
@@ -35,17 +47,8 @@ const postSchema = new Schema({
     default: 0, // Número de vistas, por defecto es 0
   },
   media: {
-    type: [
-      {
-        url: { type: String, required: true }, // URL del medio (foto, video, etc.)
-        type: {
-          type: String,
-          enum: ["image", "video"],
-          required: true,
-        }, // Tipo de medio
-      },
-    ],
-    default: [], // Por defecto, no hay medios
+    type: [mediaSchema], // Array de medios (imágenes, videos, audios)
+    default: [], // Por defecto, el post puede no tener medios
   },
   background: {
     type: String, // Puede representar el estado de fondo, como "draft" o "published"

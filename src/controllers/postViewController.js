@@ -26,7 +26,7 @@ export const getPostViews = async (req, res) => {
     const { post_id } = req.query;
 
     if (!post_id) {
-      return res.status(400).json({ message: "Se requiere post_id" });
+      return res.status(400).json({ message: "Faltan campos requeridos" });
     }
 
     const postViews = await PostView.find({ post_id }).populate("user_id");

@@ -24,7 +24,7 @@ export const getSavedPosts = async (req, res) => {
     const { user_id } = req.query;
 
     if (!user_id) {
-      return res.status(400).json({ message: "Se requiere user_id" });
+      return res.status(400).json({ message: "Faltan campos requeridos" });
     }
 
     const savedPosts = await SavedPost.find({ user_id }).populate("post_id");

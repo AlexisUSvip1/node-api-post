@@ -2,10 +2,15 @@
 import express from "express";
 const router = express.Router();
 import { ensureAuthenticated } from "../middlewares/authMiddleware.js"; // Importa el middleware
-
+import { upload } from "../middlewares/multerConfig.js";
 import { getPosts, createPost } from "../controllers/postController.js";
 
 router.get("/post-dev-get", ensureAuthenticated, getPosts);
-router.post("/post-dev", ensureAuthenticated, createPost);
+router.post(
+  "/post-dev",
+  ensureAuthenticated,
+  upload.array("media", 5),
+  createPost
+);
 
 export default router;

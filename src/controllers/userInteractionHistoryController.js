@@ -7,7 +7,7 @@ export const getInteractions = async (req, res) => {
 
     if (!user_id && !post_id && !comment_id && !interaction_type) {
       return res.status(400).json({
-        message: "Se requiere user_id, post_id, comment_id o interaction_type",
+        message: "Faltan campos requeridos",
       });
     }
 
@@ -39,9 +39,7 @@ export const addInteractionHistory = async (req, res) => {
     const { user_id, post_id, interaction_type } = req.body;
 
     if (!user_id || !post_id || !interaction_type) {
-      return res.status(400).json({
-        message: "user_id, post_id y interaction_type son obligatorios.",
-      });
+      return res.status(400).json({ message: "Faltan campos requeridos" });
     }
 
     if (!["like", "comment"].includes(interaction_type)) {

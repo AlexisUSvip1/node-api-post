@@ -37,7 +37,7 @@ export const getComments = async (req, res) => {
 
     // Verificar que al menos uno de los parámetros esté presente
     if (!post_id && !user_id) {
-      return res.status(400).json({ message: "Se requiere post_id o user_id" });
+      return res.status(400).json({ message: "Faltan campos requeridos" });
     }
 
     // Construir la consulta de búsqueda

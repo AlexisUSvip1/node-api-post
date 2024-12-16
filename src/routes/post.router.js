@@ -5,12 +5,7 @@ import { ensureAuthenticated } from "../middlewares/authMiddleware.js"; // Impor
 import { upload } from "../middlewares/multerConfig.js";
 import { getPosts, createPost } from "../controllers/postController.js";
 
-router.get("/post-dev-get", ensureAuthenticated, getPosts);
-router.post(
-  "/post-dev",
-  ensureAuthenticated,
-  upload.array("media", 5),
-  createPost
-);
+router.get("/post-dev-get", getPosts);
+router.post("/post-dev", upload.array("media", 5), createPost);
 
 export default router;

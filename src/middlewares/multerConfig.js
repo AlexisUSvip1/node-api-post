@@ -14,12 +14,15 @@ const storage = multer.diskStorage({
 
 // Validar el tipo de archivo
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = ["image/jpeg", "image/png", "video/mp4", "audio/mpeg"];
-  if (allowedTypes.includes(file.mimetype)) {
+  if (
+    file.mimetype.startsWith("image/") ||
+    file.mimetype.startsWith("video/")
+  ) {
     cb(null, true);
   } else {
     cb(new Error("Tipo de archivo no permitido"), false);
   }
 };
+
 
 export const upload = multer({ storage, fileFilter });

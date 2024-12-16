@@ -1,5 +1,5 @@
 const corsOptions = {
-  origin: "http://localhost:5173", // Permite solicitudes solo desde esta URL
+  origin: "http://127.0.0.1:5500", // Permite solicitudes solo desde esta URL
   methods: ["GET", "POST"], // Métodos permitidos
   credentials: true, // Asegura que las credenciales como cookies se envíen
 };

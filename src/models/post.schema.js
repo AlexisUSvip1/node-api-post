@@ -28,9 +28,8 @@ const postSchema = new Schema({
     ref: "User", // Referencia al modelo 'User'
     required: true,
   },
-  type_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "TypePost", // Referencia al modelo 'TypePost'
+  type_name: {
+    type: String,
     required: true,
   },
   status: {

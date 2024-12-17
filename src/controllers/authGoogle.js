@@ -19,6 +19,11 @@ export const callback = (req, res, next) => {
       if (!user) {
         return res.redirect("/");
       }
+      // Si es un usuario de Google, asegurarse de que el googleId está presente
+      if (user.googleId && !user.facebookId) {
+        user.facebookId = undefined; // No almacenar facebookId si es un usuario de Google
+      }
+
       req.login(user, (err) => {
         if (err) {
           return next(err);

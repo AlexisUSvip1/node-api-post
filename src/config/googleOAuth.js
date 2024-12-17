@@ -1,5 +1,6 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+
 import { User } from "../models/user.schema.js";
 export const configureGoogleOAuth = () => {
   passport.use(

@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
-import passport from "./src/middlewares/passport.js";
+import passportGoogle from "./src/middlewares/passportGoogle.js";
 import sessionConfig from "./src/middlewares/session.js";
 import corsOptions from "./src/middlewares/cors.js";
 import connectDB from "./src/database/mongodb.js";
@@ -25,7 +25,6 @@ connectDB();
 
 // Configurar Google OAuth
 configureGoogleOAuth();
-
 // Aplica la configuración de CORS globalmente
 app.use(cors(corsOptions));
 
@@ -36,14 +35,12 @@ app.use(sessionConfig);
 app.use(express.json());
 
 // Inicializa Passport y la sesión de Passport
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Usar el postRouter para manejar las rutas relacionadas con las publicaciones
+app.use(passportGoogle.initialize());
+app.use(passportGoogle.session());
 app.use("/api", postRouter);
 app.use("/api", userRouter);
 app.use("/api", tagsRouter);
-app.use("api/", comment);
+app.use("/api", comment);
 app.use("/api", userInteractionHistoryRoutes);
 app.use("/api", userRoutes);
 app.use("/auth", authRouter);
@@ -54,7 +51,6 @@ app.use((req, res, next) => {
     .status(404)
     .json({ error: "Acceso no autorizado. Por favor, inicia sesión." });
 });
-
 
 app.listen(3000, () => {
   console.log("Server is running at port 3000");

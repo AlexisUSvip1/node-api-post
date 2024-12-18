@@ -1,5 +1,6 @@
 import passport from "passport";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 dotenv.config();
 
 // Autenticación con Google
@@ -19,20 +20,29 @@ export const callback = (req, res, next) => {
       if (!user) {
         return res.redirect("/");
       }
-      // Si es un usuario de Google, asegurarse de que el googleId está presente
-      if (user.googleId && !user.facebookId) {
-        user.facebookId = undefined; // No almacenar facebookId si es un usuario de Google
-      }
-
-      req.login(user, (err) => {
-        if (err) {
-          return next(err);
-        }
-        res.redirect("http://localhost:3000/auth/profile");
+      const tokenPayload = {
+        id: user.id,
+        email: user.email,
+        displayName: user.display_name,
+      };
+      const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
+      res.json({
+        message: "Autenticación exitosa",
+        token,
+        user: {
+          id: user.id,
+          google_id: user.googleId,
+          email: user.email,
+          displayName: user.display_name,
+          avatar_url: user.avatar_url,
+        },
       });
     }
   )(req, res, next);
 };
+
 
 // Otras rutas de Google
 export const success = (req, res) => {

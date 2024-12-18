@@ -4,7 +4,6 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import passportGoogle from "./src/middlewares/passportGoogle.js";
-import sessionConfig from "./src/middlewares/session.js";
 import corsOptions from "./src/middlewares/cors.js";
 import connectDB from "./src/database/mongodb.js";
 import authRouter from "./src/routes/auth.router.js";
@@ -14,6 +13,7 @@ import tagsRouter from "./src/routes/tags.router.js";
 import comment from "./src/routes/comment.router.js";
 import userInteractionHistoryRoutes from "./src/routes/user_interaction.router.js";
 import userRoutes from "./src/routes/users.router.js";
+import { ensureAuthenticated } from "./src/middlewares/authMiddleware.js";
 import { configureGoogleOAuth } from "./src/config/googleOAuth.js";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
@@ -28,15 +28,13 @@ configureGoogleOAuth();
 // Aplica la configuración de CORS globalmente
 app.use(cors(corsOptions));
 
-// Configura la sesión de Express
-app.use(sessionConfig);
-
 // Middleware para manejar JSON en el cuerpo de las solicitudes
 app.use(express.json());
 
 // Inicializa Passport y la sesión de Passport
 app.use(passportGoogle.initialize());
-app.use(passportGoogle.session());
+
+app.use("/api", ensureAuthenticated);
 app.use("/api", postRouter);
 app.use("/api", userRouter);
 app.use("/api", tagsRouter);

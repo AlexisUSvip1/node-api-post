@@ -1,4 +1,7 @@
 import express from "express";
+import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+dotenv.config();
 const router = express.Router();
 import { ensureAuthenticated } from "../middlewares/authMiddleware.js";
 // Importa las funciones desde authGoogle.js
@@ -20,8 +23,20 @@ router.get("/", (req, res) => {
     <a href='/auth/google'>Login with Google</a><br>
   `);
 });
-router.get("/profile", ensureAuthenticated, (req, res) => {
-  res.send(`Welcome ${req.user.display_name}`);
+router.get("/profile", (req, res) => {
+  const token = req.query.token;
+  console.log(req.query);
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      return res.send(`Welcome ${decoded.displayName || decoded.email}`);
+    } catch (error) {
+      return res.status(400).json({ message: "Token inválido o expirado" });
+    }
+  }
+
+  // Si no hay token, simplemente muestra la página
+  res.send("Welcome to your profile. No token provided.");
 });
 router.get("/logout", ensureAuthenticated, (req, res) => {
   req.logout(() => {

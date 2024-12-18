@@ -4,11 +4,10 @@ import {
   savePost,
   getSavedPosts,
 } from "../controllers/savedPost.controller.js";
-import { ensureAuthenticated } from "../middlewares/authMiddleware.js"; // Importa el middleware
 
 const router = express.Router();
 
-router.post("/save-post", ensureAuthenticated, savePost);
-router.get("/get-saved-posts", ensureAuthenticated, getSavedPosts);
+router.post("/save-post", savePost);
+router.get("/get-saved-posts", getSavedPosts);
 
 export default router;

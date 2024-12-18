@@ -1,8 +1,19 @@
+import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+dotenv.config();
+
 export const ensureAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return next();
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    return res
+      .status(401)
+      .json({ message: "Acceso denegado: Token no proporcionado" });
   }
-  res
-    .status(401)
-    .json({ error: "Acceso no autorizado. Por favor, inicia sesión." });
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verifica el token
+    req.user = decoded; // Adjunta la información del usuario al request
+    next(); // Pasa al siguiente middleware o controlador
+  } catch (error) {
+    return res.status(401).json({ message: "Token inválido o expirado" });
+  }
 };

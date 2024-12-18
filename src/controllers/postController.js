@@ -13,16 +13,6 @@ export const getPosts = async (req, res) => {
 export const createPost = async (req, res) => {
   try {
     const { title, body, user_id, status, type_name, background } = req.body;
-
-    console.log(
-      "si llega",
-      title,
-      body,
-      user_id,
-      status,
-      type_name,
-      background
-    );
     // Validar campos requeridos
     if (!title || !body || !user_id || !status || !type_name || !background) {
       return res.status(400).json({ message: "Faltan campos requeridos" });

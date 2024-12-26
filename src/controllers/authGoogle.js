@@ -30,6 +30,7 @@ export const callback = (req, res, next) => {
         id: user.id,
         email: user.email,
         displayName: user.display_name,
+        avatar_url: user.avatar_url,
       };
       const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
         expiresIn: "1h",
@@ -51,6 +52,7 @@ export const success = (req, res) => {
   const userInfo = {
     id: req.session.passport.user.id,
     displayName: req.session.passport.user.displayName,
+
     provider: req.session.passport.user.provider,
   };
   res.json(userInfo);

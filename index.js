@@ -15,6 +15,8 @@ import userInteractionHistoryRoutes from "./src/routes/user_interaction.router.j
 import userRoutes from "./src/routes/users.router.js";
 import { ensureAuthenticated } from "./src/middlewares/authMiddleware.js";
 import { configureGoogleOAuth } from "./src/config/googleOAuth.js";
+import bodyParser from "body-parser";
+
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,6 +32,7 @@ app.use(cors(corsOptions));
 
 // Middleware para manejar JSON en el cuerpo de las solicitudes
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true })); // ✅ Permite leer datos de formularios
 
 // Inicializa Passport y la sesión de Passport
 app.use(passportGoogle.initialize());

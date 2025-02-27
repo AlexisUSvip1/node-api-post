@@ -6,13 +6,13 @@ dotenv.config();
 
 // Autenticación con Google
 export const authenticate = passport.authenticate("google", {
-  scope: ["profile", "email"], // Los datos que solicitamos de Google
+  scope: ["profile", "email"],
 });
 
 export const callback = (req, res, next) => {
   passport.authenticate(
     "google",
-    { session: false }, // Disable session since this is stateless
+    { session: false },
     (err, user, info) => {
       if (err) {
         return res
@@ -25,7 +25,6 @@ export const callback = (req, res, next) => {
           .json({ message: "User not found or unauthorized" });
       }
 
-      // Respond with user data and token
       const tokenPayload = {
         id: user.id,
         email: user.email,
@@ -67,12 +66,11 @@ export const signout = (req, res) => {
     if (err) {
       return res.status(400).send({ message: "Error al cerrar sesión" });
     } else {
-      res.redirect("/"); // Redirige al inicio después de cerrar sesión
+      res.redirect("/");
     }
   });
 };
 
-// Serialización y deserialización del usuario
 passport.serializeUser(function (user, done) {
   done(null, user);
 });

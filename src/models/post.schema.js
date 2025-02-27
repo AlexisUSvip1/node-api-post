@@ -25,13 +25,14 @@ const postSchema = new Schema({
   },
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Referencia al modelo 'User'
-    required: true,
+    ref: "User",
+    required: false,
   },
-  type_name: {
+  user_avatar: {
     type: String,
-    required: true,
+    required: false,
   },
+  usernameUser: { type: String, required: true },  // 🔹 Se agrega username aquí
   status: {
     type: String,
     enum: ["draft", "published"], // Valores posibles para el estado del post
@@ -48,10 +49,6 @@ const postSchema = new Schema({
   media: {
     type: [mediaSchema], // Array de medios (imágenes, videos, audios)
     default: [], // Por defecto, el post puede no tener medios
-  },
-  background: {
-    type: String, // Puede representar el estado de fondo, como "draft" o "published"
-    default: "draft",
   },
   created_at: {
     type: Date,

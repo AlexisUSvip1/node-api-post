@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const mediaSchema = new Schema({
@@ -8,13 +8,17 @@ const mediaSchema = new Schema({
   },
   type: {
     type: String,
-    enum: ["image", "video", "audio"], // Tipos de medios permitidos
+    enum: ['image', 'video', 'audio'], // Tipos de medios permitidos
     required: true, // Obligatorio
   },
 });
 
 // Definir el esquema de Post
 const postSchema = new Schema({
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+    auto: true, // Se genera automáticamente si no se proporciona
+  },
   title: {
     type: String,
     required: true, // El título es obligatorio
@@ -25,18 +29,18 @@ const postSchema = new Schema({
   },
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: 'User',
     required: false,
   },
   user_avatar: {
     type: String,
     required: false,
   },
-  usernameUser: { type: String, required: true },  // 🔹 Se agrega username aquí
+  usernameUser: { type: String, required: true }, // 🔹 Se agrega username aquí
   status: {
     type: String,
-    enum: ["draft", "published"], // Valores posibles para el estado del post
-    default: "draft",
+    enum: ['draft', 'published'], // Valores posibles para el estado del post
+    default: 'draft',
   },
   likes: {
     type: Number,
@@ -58,7 +62,8 @@ const postSchema = new Schema({
     type: Date,
     default: Date.now, // La fecha de actualización, por defecto es la fecha actual
   },
+  tags: { type: [String], default: [] },
 });
 
 // Crear el modelo a partir del esquema
-export const Post = mongoose.model("Post", postSchema);
+export const Post = mongoose.model('Post', postSchema);

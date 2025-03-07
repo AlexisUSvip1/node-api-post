@@ -13,19 +13,29 @@ const mediaSchema = new Schema({
   },
 });
 
+const LikeSchema = new Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  postId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
+  like: { type: Boolean, default: false },
+});
+const SaveSchema = new Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  postId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
+  savePost: { type: Boolean, default: false },
+});
 // Definir el esquema de Post
 const postSchema = new Schema({
   _id: {
     type: mongoose.Schema.Types.ObjectId,
-    auto: true, // Se genera automáticamente si no se proporciona
+    auto: true,
   },
   title: {
     type: String,
-    required: true, // El título es obligatorio
+    required: true,
   },
   body: {
     type: String,
-    required: true, // El cuerpo del post es obligatorio
+    required: true,
   },
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
@@ -36,34 +46,46 @@ const postSchema = new Schema({
     type: String,
     required: false,
   },
-  usernameUser: { type: String, required: true }, // 🔹 Se agrega username aquí
+  usernameUser: { type: String, required: true },
   status: {
     type: String,
-    enum: ['draft', 'published'], // Valores posibles para el estado del post
+    enum: ['draft', 'published'],
     default: 'draft',
   },
-  likes: {
+  total_likes: {
     type: Number,
-    default: 0, // Número de likes, por defecto es 0
+    default: 0,
   },
-  views: {
-    type: Number,
-    default: 0, // Número de vistas, por defecto es 0
-  },
+  total_saves: { type: Number, default: 0 },
   media: {
-    type: [mediaSchema], // Array de medios (imágenes, videos, audios)
-    default: [], // Por defecto, el post puede no tener medios
+    type: [mediaSchema],
+    default: [],
   },
   created_at: {
     type: Date,
-    default: Date.now, // La fecha de creación, por defecto es la fecha actual
+    default: Date.now,
   },
   updated_at: {
     type: Date,
-    default: Date.now, // La fecha de actualización, por defecto es la fecha actual
+    default: Date.now,
   },
   tags: { type: [String], default: [] },
 });
 
-// Crear el modelo a partir del esquema
+postSchema.pre('save', async function (next) {
+  const post = this;
+  const likesCount = await mongoose.model('Like').countDocuments({ postId: post._id, like: true });
+  post.total_likes = likesCount;
+
+  const savesCount = await mongoose
+    .model('Save')
+    .countDocuments({ postId: post._id, savePost: true });
+  post.total_saves = savesCount;
+
+  next();
+});
+
+// Crear los modelos a partir del esquema
 export const Post = mongoose.model('Post', postSchema);
+export const Like = mongoose.model('Like', LikeSchema);
+export const Save = mongoose.model('Save', SaveSchema);

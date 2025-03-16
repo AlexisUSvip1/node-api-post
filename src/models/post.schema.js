@@ -39,7 +39,7 @@ const postSchema = new Schema({
   },
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
     required: false,
   },
   user_avatar: {
@@ -49,8 +49,8 @@ const postSchema = new Schema({
   usernameUser: { type: String, required: true },
   status: {
     type: String,
-    enum: ['draft', 'published'],
-    default: 'draft',
+    enum: ["draft", "published"],
+    default: "draft",
   },
   total_likes: {
     type: Number,
@@ -68,6 +68,11 @@ const postSchema = new Schema({
   updated_at: {
     type: Date,
     default: Date.now,
+  },
+  commnets: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Comment",
+    required: false,
   },
   tags: { type: [String], default: [] },
 });

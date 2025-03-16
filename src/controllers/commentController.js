@@ -1,19 +1,21 @@
 // src/controllers/comment.controller.js
 
 import { Comment } from "../models/comment.schema.js";
+import { User } from "../models/user.schema.js";
 
 export const createComment = async (req, res) => {
   try {
-    const { body, user_id, post_id } = req.body;
+    const { body, user_id, post_id, userName, user_avatar } = req.body;
 
-    // Validar campos requeridos
-    if (!body || !user_id || !post_id) {
+    if (!body || !user_id || !post_id || !userName || !user_avatar) {
       return res.status(400).json({ message: "Faltan campos requeridos" });
     }
 
-    // Crear un nuevo comentario
+    const user = await User.findById(user_id);
     const newComment = new Comment({
       body,
+      user_avatar: user.avatar_url,
+      userName: user.display_name,
       user_id,
       post_id,
     });
@@ -21,7 +23,6 @@ export const createComment = async (req, res) => {
     // Guardar el comentario
     const savedComment = await newComment.save();
 
-    // Responder con el comentario guardado
     return res.status(201).json(savedComment);
   } catch (error) {
     console.error("Error al insertar el comentario:", error);
@@ -30,33 +31,33 @@ export const createComment = async (req, res) => {
       .json({ message: "Error al insertar el comentario", error });
   }
 };
-
-export const getComments = async (req, res) => {
+export const getCommentsById = async (req, res) => {
+  console.log(req, res);
   try {
-    const { post_id, user_id } = req.query;
+    const { id } = req.params;
 
-    // Verificar que al menos uno de los parámetros esté presente
-    if (!post_id && !user_id) {
-      return res.status(400).json({ message: "Faltan campos requeridos" });
+    // Validate the required parameter
+    if (!id) {
+      return res.status(400).json({ message: "Falta el post_id requerido" });
     }
 
-    // Construir la consulta de búsqueda
-    const query = {};
-    if (post_id) query.post_id = post_id;
-    if (user_id) query.user_id = user_id;
+    // Fetch comments for a specific post_id
+    const comments = await Comment.find({ post_id: id });
 
-    // Obtener los comentarios con populates opcionales
-    const comments = await Comment.find(query)
-      .populate("user_id", "display_name email")
-      .populate("post_id", "title")
-      .exec();
+    // If no comments found
+    if (!comments || comments.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No se encontraron comentarios para este post" });
+    }
 
-    // Responder con los comentarios encontrados
+    // Return the comments
     return res.status(200).json(comments);
   } catch (error) {
-    console.error("Error al obtener los comentarios:", error);
-    return res
-      .status(500)
-      .json({ message: "Error al obtener los comentarios", error });
+    console.error("Error al obtener comentarios por ID:", error);
+    return res.status(500).json({
+      message: "Error interno del servidor al obtener comentarios",
+      error,
+    });
   }
 };

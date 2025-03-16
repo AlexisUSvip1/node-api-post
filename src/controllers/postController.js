@@ -23,7 +23,7 @@ export const getPosts = async (req, res) => {
 export const createPost = async (req, res) => {
   try {
     const { title, body, user_id, tags } = req.body;
-    console.log(tags);
+
     const user = await User.findById(user_id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });

@@ -23,7 +23,7 @@ const SaveSchema = new Schema({
   postId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
   savePost: { type: Boolean, default: false },
 });
-// Definir el esquema de Post
+
 const postSchema = new Schema({
   _id: {
     type: mongoose.Schema.Types.ObjectId,
@@ -56,7 +56,7 @@ const postSchema = new Schema({
     type: Number,
     default: 0,
   },
-  total_saves: { type: Number, default: 0 },
+  savePost: { type: Boolean, default: false },
   media: {
     type: [mediaSchema],
     default: [],
@@ -77,15 +77,12 @@ const postSchema = new Schema({
   tags: { type: [String], default: [] },
 });
 
-postSchema.pre('save', async function (next) {
+postSchema.pre("save", async function (next) {
   const post = this;
-  const likesCount = await mongoose.model('Like').countDocuments({ postId: post._id, like: true });
+  const likesCount = await mongoose
+    .model("Like")
+    .countDocuments({ postId: post._id, like: true });
   post.total_likes = likesCount;
-
-  const savesCount = await mongoose
-    .model('Save')
-    .countDocuments({ postId: post._id, savePost: true });
-  post.total_saves = savesCount;
 
   next();
 });

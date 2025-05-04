@@ -1,5 +1,5 @@
 // src/controllers/postTag.controller.js
-import { PostTag } from "../models/postTag.schema.js";
+import { PostTag } from "../../models/post-models/post_tags.schema.js";
 
 export const addPostTag = async (req, res) => {
   try {

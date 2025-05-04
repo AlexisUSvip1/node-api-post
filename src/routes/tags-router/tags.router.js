@@ -1,6 +1,9 @@
 // src/routes/tag.routes.js
 import express from "express";
-import { getTags, createTag } from "../controllers/tagsController.js";
+import {
+  getTags,
+  createTag,
+} from "../../controllers/tags-controller/tagsController.js";
 
 const router = express.Router();
 

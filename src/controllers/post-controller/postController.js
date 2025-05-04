@@ -1,11 +1,12 @@
-import { Post, Like, Save } from "../models/post.schema.js";
-import { User } from "../models/user.schema.js";
+import { Post, Like, Save } from "../../models/post-models/post.schema.js";
+import { User } from "../../models/users-models/user.schema.js";
 import {
   validateUserId,
   validatePostExists,
   validateLikeExistence,
   validateUserExists,
-} from "../utils/validators.js";
+  validateLikeOrSaveDeletion,
+} from "../../utils/validators.js";
 
 export const getPosts = async (req, res) => {
   try {
@@ -24,7 +25,7 @@ export const getPosts = async (req, res) => {
         return {
           ...post,
           total_likes: likesCount,
-          savePost: savePost ? savePost.savePost : false,
+          savePost: savePost ? savePost.savePost : false, // Asegúrate de incluir savePost
         };
       })
     );
@@ -42,9 +43,6 @@ export const createPost = async (req, res) => {
 
     // Validar que el usuario exista
     await validateUserExists(user_id);
-
-    // Validar que los campos requeridos estén presentes
-    validatePostCreationFields(title, body, user_id, tags);
 
     const user = await User.findById(user_id);
 
@@ -79,15 +77,19 @@ export const updateSavePost = async (req, res) => {
   try {
     const { id } = req.params;
     const { user_id } = req.body;
+    const isValidUser = await validateUserId(user_id);
+    if (!isValidUser) {
+      return res
+        .status(404)
+        .json({ error: `User ID: ${user_id} no fue encontrado` });
+    }
 
-    // Validar que el user_id esté presente
-    validateUserId(user_id);
-
-    // Validar que el post exista
-    await validatePostExists(id);
-
-    // Validar que el "like" o "save" pueda ser eliminado
-    await validateLikeOrSaveDeletion(id, user_id);
+    const isValidPost = await validatePostExists(id);
+    if (!isValidPost) {
+      return res
+        .status(404)
+        .json({ error: `Post ID: ${id} no fue encontrado` });
+    }
 
     const existSavepost = await Save.findOne({ postId: id, userId: user_id });
 
@@ -106,19 +108,51 @@ export const updateSavePost = async (req, res) => {
     res.status(500).json({ message: "Error updating post save", error });
   }
 };
+
+export const checkUserLike = async (req, res) => {
+  try {
+    const { idPost, idUser } = req.params;
+
+    const like = await Like.findOne({ postId: idPost, userId: idUser });
+    res.status(200).json({ liked: !!like });
+  } catch (error) {
+    console.error("Error verificando like:", error);
+    res.status(500).json({ message: "Error verificando like", error });
+  }
+};
+
+export const checkUserSaved = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const savedPosts = await Save.find({ userId, savePost: true });
+    const savedPostIds = savedPosts.map((save) => save.postId.toString());
+
+    res.status(200).json({ savedPostIds });
+  } catch (error) {
+    console.error("Error fetching saved posts:", error);
+    res.status(500).json({ message: "Error fetching saved posts", error });
+  }
+};
+
 export const updatePostLike = async (req, res) => {
   try {
     const { id } = req.params;
     const { user_id } = req.body;
 
-    // Validar que el user_id esté presente
-    validateUserId(user_id);
+    const isValidUser = await validateUserId(user_id);
+    if (!isValidUser) {
+      return res
+        .status(404)
+        .json({ error: `User ID: ${user_id} no fue encontrado` });
+    }
 
-    // Validar que el post exista
-    await validatePostExists(id);
-
-    // Validar si el like ya existe
-    await validateLikeExistence(id, user_id);
+    const isValidPost = await validatePostExists(id);
+    if (!isValidPost) {
+      return res
+        .status(404)
+        .json({ error: `Post ID: ${id} no fue encontrado` });
+    }
 
     const existingLike = await Like.findOne({ postId: id, userId: user_id });
     if (existingLike) {
@@ -137,39 +171,39 @@ export const updatePostLike = async (req, res) => {
     res.status(500).json({ message: "Error updating post like", error });
   }
 };
-export const checkUserSaved = async (req, res) => {
+
+export const getUserLikedPosts = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const savedPosts = await Save.find({ userId, savePost: true }).populate(
-      "postId"
-    );
+    const likedPosts = await Like.find({ userId, like: true });
+    const likedPostIds = likedPosts.map((like) => like.postId.toString());
 
-    const posts = savedPosts.map((save) => ({
-      ...save.postId._doc,
-    }));
+    res.status(200).json({ likedPostIds });
+  } catch (error) {
+    console.error("Error fetching liked posts:", error);
+    res.status(500).json({ message: "Error fetching liked posts", error });
+  }
+};
+export const getUserSavedPosts = async (req, res) => {
+  try {
+    const { userId } = req.params;
 
-    res.status(200).json(posts);
+    const savedPosts = await Save.find({ userId, savePost: true });
+
+    if (!savedPosts || savedPosts.length === 0) {
+      return res.status(200).json({ data: [] }); // Devuelve array vacío si no hay guardados
+    }
+
+    // Extrae solo los IDs de los posts guardados
+    const postIds = savedPosts.map((item) => item.postId);
+
+    // Busca los posts en la colección Post usando esos IDs
+    const posts = await Post.find({ _id: { $in: postIds } });
+
+    res.status(200).json({ data: posts });
   } catch (error) {
     console.error("Error fetching saved posts:", error);
     res.status(500).json({ message: "Error fetching saved posts", error });
-  }
-};
-
-export const checkUserLike = async (req, res) => {
-  try {
-    const { idPost, idUser } = req.params;
-
-    // Validar que el user_id esté presente
-    validateUserId(idUser);
-
-    // Validar que el post exista
-    await validatePostExists(idPost);
-
-    const like = await Like.findOne({ postId: idPost, userId: idUser });
-    res.status(200).json({ liked: !!like });
-  } catch (error) {
-    console.error("Error verificando like:", error);
-    res.status(500).json({ message: "Error verificando like", error });
   }
 };

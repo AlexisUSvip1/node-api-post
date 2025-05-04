@@ -1,5 +1,5 @@
 // src/controllers/userInteractionHistory.controller.js
-import { UserInteractionHistory } from "../models/user_interaction_history.schema.js";
+import { UserInteractionHistory } from "../../models/users-models/user_interaction_history.schema.js";
 
 export const getInteractions = async (req, res) => {
   try {

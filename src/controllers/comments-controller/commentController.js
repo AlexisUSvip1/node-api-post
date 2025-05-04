@@ -1,7 +1,5 @@
-// src/controllers/comment.controller.js
-
-import { Comment } from "../models/comment.schema.js";
-import { User } from "../models/user.schema.js";
+import { Comment } from "../../models/comment-models/comment.schema.js";
+import { User } from "../../models/users-models/user.schema.js";
 
 export const createComment = async (req, res) => {
   try {

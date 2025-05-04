@@ -1,7 +1,7 @@
 import session from "express-session";
 
 const sessionConfig = session({
-  secret: "secret", // Clave para firmar las sesiones
+  secret: "secret",
   resave: false,
   saveUninitialized: true,
   cookie: {

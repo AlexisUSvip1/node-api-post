@@ -7,20 +7,23 @@ import passportGoogle from './src/middlewares/passportGoogle.js';
 import corsOptions from './src/middlewares/cors.js';
 import connectDB from './src/database/mongodb.js';
 import authRouter from './src/routes/auth.router.js';
-import postRouter from './src/routes/post.router.js';
-import userRouter from './src/routes/users.router.js';
-import tagsRouter from './src/routes/tags.router.js';
-import comment from './src/routes/comment.router.js';
-import userInteractionHistoryRoutes from './src/routes/user_interaction.router.js';
-import userRoutes from './src/routes/users.router.js';
+import postRouter from "./src/routes/post-router/post.router.js";
+import userRouter from "./src/routes/users-router/users.router.js";
+import tagsRouter from "./src/routes/tags-router/tags.router.js";
+import comment from "./src/routes/comment-router/comment.router.js";
+import userInteractionHistoryRoutes from "./src/routes/users-router/user_interaction.router.js";
+import userRoutes from "./src/routes/users-router/users.router.js";
 import { ensureAuthenticated } from './src/middlewares/authMiddleware.js';
 import { configureGoogleOAuth } from './src/config/googleOAuth.js';
 import bodyParser from 'body-parser';
+import morgan from "morgan";
+
 
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
+app.use(morgan("dev"));
 
 // Conectar a MongoDB
 connectDB();

@@ -3,7 +3,7 @@ import express from "express";
 import {
   getInteractions,
   addInteractionHistory,
-} from "../controllers/userInteractionHistoryController.js";
+} from "../../controllers/users-controller/userInteractionHistoryController.js";
 
 const router = express.Router();
 

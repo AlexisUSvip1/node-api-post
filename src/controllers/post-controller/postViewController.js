@@ -1,5 +1,5 @@
 // src/controllers/postView.controller.js
-import { PostView } from "../models/postView.schema.js";
+import { PostView } from "../../models/post-models/post_views.schema";
 
 export const viewPost = async (req, res) => {
   try {

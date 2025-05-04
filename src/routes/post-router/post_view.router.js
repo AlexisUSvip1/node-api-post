@@ -1,6 +1,9 @@
 // src/routes/postView.routes.js
 import express from "express";
-import { viewPost, getPostViews } from "../controllers/postViewController.js";
+import {
+  viewPost,
+  getPostViews,
+} from "../../controllers/post-controller/postViewController";
 
 const router = express.Router();
 

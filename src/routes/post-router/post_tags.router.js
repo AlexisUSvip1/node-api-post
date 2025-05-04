@@ -1,6 +1,9 @@
 // src/routes/postTag.routes.js
 import express from "express";
-import { addPostTag, getPostTags } from "../controllers/post_tagsController.js";
+import {
+  addPostTag,
+  getPostTags,
+} from "../../controllers/post-controller/post_tagsController";
 
 const router = express.Router();
 

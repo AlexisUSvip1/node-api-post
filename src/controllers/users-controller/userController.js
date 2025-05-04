@@ -1,5 +1,6 @@
 // src/controllers/user.controller.js
-import { User } from "../models/user.schema.js";
+import { User } from "../../models/users-models/user.schema.js";
+import { validateEmailUser } from "../../utils/validators.js";
 
 export const getUsers = async (req, res) => {
   try {
@@ -25,10 +26,16 @@ export const getUserById = async (req, res) => {
   }
 };
 
-
 export const createUser = async (req, res) => {
   try {
     const { display_name, family_name, email, avatar_url } = req.body;
+
+    const isValidEmail = await validateEmailUser(email);
+    if (!isValidEmail) {
+      return res
+        .status(400)
+        .json({ message: "El correo electrónico no es válido." });
+    }
 
     const newUser = new User({
       display_name,
@@ -38,9 +45,12 @@ export const createUser = async (req, res) => {
     });
 
     const savedUser = await newUser.save();
+
     return res.status(201).json(savedUser);
   } catch (error) {
-    console.error("Error inserting users:", error);
-    return res.status(500).json({ message: "Error inserting users", error });
+    console.error("Error al insertar el usuario:", error);
+    return res
+      .status(500)
+      .json({ message: "Error al insertar el usuario", error });
   }
 };

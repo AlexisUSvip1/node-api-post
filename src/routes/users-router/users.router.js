@@ -12,7 +12,7 @@ const router = express.Router();
 router.get('/get-users', getUsers);
 router.post('/post-users', createUser);
 router.get('/get-user/:id', getUserById);
-router.get('/newFollowers', getNewFollowers);
+router.get("/newFollowers/:userId/", getNewFollowers);
 router.post('/sendRequestFriend/:userId/:friendId', sendRequestFriend);
 
 export default router;
